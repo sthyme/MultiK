@@ -9,7 +9,7 @@
 #' @param seed Optional numerical value. This sets a random seed for generating reproducible results
 #' @return A list with components: k is a vector of number of runs for each K. clusters is a list containing the clustering labels for each subsampling run at each resolution parameter. consensus is a list containing a consensus matrix for each K.
 #' @export
-MultiK <- function(seu, resolution = seq(0.05, 2, 0.05), nPC = 30, reps = 100, pSample = 0.8, seed = NULL) {
+MultiK <- function(seu, resolution = seq(0.05, 2, 0.1), nPC = 30, reps = 100, pSample = 0.8, seed = NULL) {
   # setting seed for reproducibility
   if (is.null(seed) == TRUE) {
     seed <- timeSeed <- as.numeric(Sys.time())
