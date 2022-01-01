@@ -432,14 +432,16 @@ RunSigClust <- function(x1, x2, l1, l2) {
 # Calculate SigClust pvalues following the dendrogram #
 #########################################################
 CalcSigClust = function(seu, clusters) {
-
+  print("TESTTEST1")
   suppressPackageStartupMessages(library(Seurat))
-  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = FALSE)
+  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = TRUE)
   seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
                               loess.span = 0.3, clip.max = "auto",
-                              num.bin = 20, binning.method = "equal_width", verbose = F)
+                              num.bin = 20, binning.method = "equal_width", verbose = T)
+  print("TESTTEST2")
   hvg <- VariableFeatures(object=seu)
   norm.hvg <- seu@assays$RNA@data[hvg, ]
+  print("TESTTEST3")
   ClustAssign <- as.character(clusters)
   n <- length(unique(ClustAssign))
   pval <- matrix(NA, ncol = n, nrow = n)
@@ -453,6 +455,7 @@ CalcSigClust = function(seu, clusters) {
     x.list[[paste0("cluster", i-1)]] <- as.matrix(norm.hvg[, ClustAssign == i-1])
     l.list[[i]] <- ClustAssign[ClustAssign == i-1]
   }
+  print("TESTTEST4")
 
   # run SigClust
   for (i in 1: (n-1)) {
@@ -463,6 +466,7 @@ CalcSigClust = function(seu, clusters) {
                                 l2 = l.list[[j]])@pval
     }
   }
+  print("TESTTEST5")
   return(pval)
 }
 
