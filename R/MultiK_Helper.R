@@ -520,7 +520,7 @@ PWSig_Heatmap <- function(pval, order) {
 PlotDendro <- function(dend, nodes_shapes) {
   suppressPackageStartupMessages(library(scales))
   suppressPackageStartupMessages(library(dendextend))
-  suppressPackageStartupMessages(library(ggdendro))
+  #suppressPackageStartupMessages(library(ggdendro))
   suppressPackageStartupMessages(library(ggplot2))
 
   dend_data <- dendro_data(dend)
