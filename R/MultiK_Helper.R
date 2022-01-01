@@ -124,7 +124,7 @@ MultiK = function(seu, resolution = seq(0.05, 2, 0.05), nPC = 30, reps = 100, pS
     subX <- seu[, subcol[[i]] ]
 
     # normalizing the data
-    subX <- NormalizeData(object = subX, normalization.method = "LogNormalize", scale.factor = 10000, verbose=F)
+#    subX <- NormalizeData(object = subX, normalization.method = "LogNormalize", scale.factor = 10000, verbose=F)
 
     # Find HVG genes ~ 2000 genes
     subX <- FindVariableFeatures(object = subX, selection.method = "vst", nfeatures = 2000,
@@ -321,8 +321,12 @@ DiagMultiKPlot = function(ks, res) {
     geom_label_repel(aes(label = ks), segment.color = 'grey50', size=3)  +
     geom_path(data=tog[match(findOptK(tog), tog$ks), ])
 
-  plot_grid(freqPlot, rpacPlot, scatPlot, ncol=3)
+  pdf("multik2.pdf", width=30, height=15)
+  plotMK <- plot_grid(freqPlot, rpacPlot, scatPlot, ncol=3)
+  plotMK
+  dev.off()
 
+  return(optK)
 
 }
 
@@ -520,7 +524,7 @@ PWSig_Heatmap <- function(pval, order) {
 PlotDendro <- function(dend, nodes_shapes) {
   suppressPackageStartupMessages(library(scales))
   suppressPackageStartupMessages(library(dendextend))
-  #suppressPackageStartupMessages(library(ggdendro))
+  suppressPackageStartupMessages(library(ggdendro))
   suppressPackageStartupMessages(library(ggplot2))
 
   dend_data <- dendro_data(dend)
