@@ -276,8 +276,10 @@ DiagMultiKPlot = function(ks, res) {
   pacobj <- CalcPAC(x1=0.1, x2=0.9, xvec = tog$ks, ml = res)
   tog$rpac <- pacobj$rPAC
   tog$one_minus_rpac  <- 1-tog$rpac
+ 
 
   # Plot Freq of # of runs
+  pdf("multik3freq.pdf", width=10, height=10)
   freqPlot <- ggplot(data=tog, aes(x=ks, y=Freq)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=14)+
@@ -289,8 +291,11 @@ DiagMultiKPlot = function(ks, res) {
     scale_x_discrete("K") +
     scale_y_continuous("Number of clustering runs") +
     geom_hline(yintercept=100, linetype="dashed", color = "black")
+  freqPlot
+  dev.off()
 
   # Plot rPAC for each K
+  pdf("multik3rpac.pdf", width=10, height=10)
   rpacPlot <- ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
     geom_point(shape=21, color="black", fill="black", size=2) +
     geom_line() +
@@ -301,12 +306,15 @@ DiagMultiKPlot = function(ks, res) {
           strip.background = element_rect(fill="white")) +
     scale_x_discrete("K") +
     scale_y_continuous("rPAC")
+  rpacPlot
+  dev.off()
 
   # Plot (1-rPAC) Vs freq for each K
   # first find optimal K using the convex hull
   optK <- findOptK(tog)
   cat("Optimal K: ", optK)
 
+  pdf("multik3sct.pdf", width=10, height=10)
   scatPlot <- ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
     geom_point(shape=21, color="black", fill="black", size=1.5) +
     geom_path(color="grey", alpha=0.75, linetype=2) +
@@ -320,11 +328,12 @@ DiagMultiKPlot = function(ks, res) {
     geom_hline(yintercept=100, linetype="dashed", color = "black") +
     geom_label_repel(aes(label = ks), segment.color = 'grey50', size=3)  +
     geom_path(data=tog[match(findOptK(tog), tog$ks), ])
-
-  pdf("multik2.pdf", width=30, height=15)
-  plotMK <- plot_grid(freqPlot, rpacPlot, scatPlot, ncol=3)
-  plotMK
+  scatPlot
   dev.off()
+  #pdf("multik2.pdf", width=30, height=15)
+  #plotMK <- plot_grid(freqPlot, rpacPlot, scatPlot, ncol=3)
+  #plotMK
+  #dev.off()
 
   return(optK)
 
@@ -387,7 +396,7 @@ getClusters <- function(seu, optK) {
   nPC <- 30
   seu <- FindNeighbors(object = seu, k.param = k.param, reduction = "pca", dims = 1: nPC, verbose = FALSE)
   resolution <- seq(0.05, 2.0, by = 0.05)
-  seu <- FindClusters(seu, resolution = resolution, verbose = F)
+  seu <- FindClusters(seu, resolution = resolution, verbose = T)
   meta.data <- seu@meta.data[, grep("RNA_snn_res.", colnames(seu@meta.data)) ]
 
   ks <- apply(meta.data, 2, function(x) length(table(x)))
@@ -406,11 +415,11 @@ getClusters <- function(seu, optK) {
     else {
       # optK not exist in the range of test resolution, find the small window
       res[i] <- findResol(seu, ks, optK[i])
-      seu <- FindClusters(seu, resolution = res[i], verbose = F)
+      seu <- FindClusters(seu, resolution = res[i], verbose = T)
       clusters[, i] <- as.numeric(as.character(seu@meta.data$seurat_clusters))
     }
   }
-  return(list("clusters"=clusters, "resolution"=res))
+  return(list("clusters"=clusters, "resolution"=res, "sobj"=seu))
 }
 
 
@@ -438,10 +447,10 @@ RunSigClust <- function(x1, x2, l1, l2) {
 CalcSigClust = function(seu, clusters) {
   print("TESTTEST1")
   suppressPackageStartupMessages(library(Seurat))
-  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = TRUE)
-  seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
-                              loess.span = 0.3, clip.max = "auto",
-                              num.bin = 20, binning.method = "equal_width", verbose = T)
+#  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = TRUE)
+ # seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
+ #                             loess.span = 0.3, clip.max = "auto",
+  #                            num.bin = 20, binning.method = "equal_width", verbose = T)
   print("TESTTEST2")
   hvg <- VariableFeatures(object=seu)
   norm.hvg <- seu@assays$RNA@data[hvg, ]
@@ -611,10 +620,10 @@ assign_nodes_shapes = function(hc, pval) {
 ########################################################################
 PlotSigClust = function(seu, clusters, pval) {
 
-  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = FALSE)
-  seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
-                              loess.span = 0.3, clip.max = "auto",
-                              num.bin = 20, binning.method = "equal_width", verbose = FALSE)
+  #seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = FALSE)
+  #seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
+  #                            loess.span = 0.3, clip.max = "auto",
+   #                           num.bin = 20, binning.method = "equal_width", verbose = FALSE)
   hvg <- VariableFeatures(object=seu)
   norm.hvg <- seu@assays$RNA@data[hvg, ]
   ClustAssign <- as.character(clusters)
@@ -628,12 +637,19 @@ PlotSigClust = function(seu, clusters, pval) {
   hc <- hclust(as.dist(1 - cor(clustMean.mat)))
 
   # plot pairwise p value heatmap
+  
+  pdf("PWSig_Heatmap.pdf", width=10, height=10)
   hp <- PWSig_Heatmap(pval=pval, order=hc$order)
+  hp
+  dev.off()
 
   # plot cluster mean dendrogram
+  pdf("Dendro.pdf", width=10, height=10)
   nodes_shapes <- assign_nodes_shapes(hc, pval)
   dend <- as.dendrogram(hc)
   plt_dendr <- PlotDendro(dend, nodes_shapes)
+  plt_dendr
+  dev.off()  
 
   lm=rbind(c(1,2),
            c(1,2))
