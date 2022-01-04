@@ -280,7 +280,8 @@ DiagMultiKPlot = function(ks, res) {
 
   # Plot Freq of # of runs
   pdf("multik3freq.pdf", width=10, height=10)
-  freqPlot <- ggplot(data=tog, aes(x=ks, y=Freq)) +
+  #freqPlot <- ggplot(data=tog, aes(x=ks, y=Freq)) +
+  ggplot(data=tog, aes(x=ks, y=Freq)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=14)+
     theme(axis.text=element_text(color="black"),
@@ -291,12 +292,13 @@ DiagMultiKPlot = function(ks, res) {
     scale_x_discrete("K") +
     scale_y_continuous("Number of clustering runs") +
     geom_hline(yintercept=100, linetype="dashed", color = "black")
-  freqPlot
+  #freqPlot
   dev.off()
 
   # Plot rPAC for each K
   pdf("multik3rpac.pdf", width=10, height=10)
-  rpacPlot <- ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
+  #rpacPlot <- ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
+  ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
     geom_point(shape=21, color="black", fill="black", size=2) +
     geom_line() +
     theme_bw(base_size=14)+
@@ -306,7 +308,7 @@ DiagMultiKPlot = function(ks, res) {
           strip.background = element_rect(fill="white")) +
     scale_x_discrete("K") +
     scale_y_continuous("rPAC")
-  rpacPlot
+  #rpacPlot
   dev.off()
 
   # Plot (1-rPAC) Vs freq for each K
@@ -315,7 +317,8 @@ DiagMultiKPlot = function(ks, res) {
   cat("Optimal K: ", optK)
 
   pdf("multik3sct.pdf", width=10, height=10)
-  scatPlot <- ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
+  #scatPlot <- ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
+  ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
     geom_point(shape=21, color="black", fill="black", size=1.5) +
     geom_path(color="grey", alpha=0.75, linetype=2) +
     theme_bw(base_size=14)+
@@ -328,7 +331,7 @@ DiagMultiKPlot = function(ks, res) {
     geom_hline(yintercept=100, linetype="dashed", color = "black") +
     geom_label_repel(aes(label = ks), segment.color = 'grey50', size=3)  +
     geom_path(data=tog[match(findOptK(tog), tog$ks), ])
-  scatPlot
+  #scatPlot
   dev.off()
   #pdf("multik2.pdf", width=30, height=15)
   #plotMK <- plot_grid(freqPlot, rpacPlot, scatPlot, ncol=3)
