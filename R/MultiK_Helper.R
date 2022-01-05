@@ -279,7 +279,6 @@ DiagMultiKPlot = function(ks, res) {
  
 
   # Plot Freq of # of runs
-  pdf("multik3freq.pdf", width=10, height=10)
   freqPlot <- ggplot(data=tog, aes(x=ks, y=Freq)) +
   ggplot(data=tog, aes(x=ks, y=Freq)) +
     geom_bar(stat="identity") +
@@ -292,8 +291,7 @@ DiagMultiKPlot = function(ks, res) {
     scale_x_discrete("K") +
     scale_y_continuous("Number of clustering runs") +
     geom_hline(yintercept=100, linetype="dashed", color = "black")
-  freqPlot
-  dev.off()
+  ggsave("multik3freq.pdf")
 
   # Plot rPAC for each K
   pdf("multik3rpac.pdf", width=10, height=10)
@@ -308,8 +306,7 @@ DiagMultiKPlot = function(ks, res) {
           strip.background = element_rect(fill="white")) +
     scale_x_discrete("K") +
     scale_y_continuous("rPAC")
-  rpacPlot
-  dev.off()
+  ggsave("multik3rpac.pdf")
 
   # Plot (1-rPAC) Vs freq for each K
   # first find optimal K using the convex hull
@@ -334,7 +331,6 @@ DiagMultiKPlot = function(ks, res) {
   #scatPlot
   #dev.off()
   ggsave("multik3sct.pdf")
-  dev.off()
   #pdf("multik5.pdf", width=30, height=15)
   #plotMK <- plot_grid(freqPlot, rpacPlot, scatPlot, ncol=3)
   #plotMK
