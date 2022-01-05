@@ -279,7 +279,7 @@ DiagMultiKPlot = function(ks, res) {
  
 
   # Plot Freq of # of runs
-  freqPlot <- ggplot(data=tog, aes(x=ks, y=Freq)) +
+  #freqPlot <- ggplot(data=tog, aes(x=ks, y=Freq)) +
   ggplot(data=tog, aes(x=ks, y=Freq)) +
     geom_bar(stat="identity") +
     theme_bw(base_size=14)+
@@ -294,8 +294,8 @@ DiagMultiKPlot = function(ks, res) {
   ggsave("multik3freq.pdf")
 
   # Plot rPAC for each K
-  pdf("multik3rpac.pdf", width=10, height=10)
-  rpacPlot <- ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
+  #pdf("multik3rpac.pdf", width=10, height=10)
+  #rpacPlot <- ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
   ggplot(data=tog, aes(x=ks, y=rpac,group=1)) +
     geom_point(shape=21, color="black", fill="black", size=2) +
     geom_line() +
@@ -314,7 +314,7 @@ DiagMultiKPlot = function(ks, res) {
   cat("Optimal K: ", optK)
 
   #pdf("multik3sct.pdf", width=10, height=10)
-  scatPlot <- ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
+  #scatPlot <- ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
   ggplot(data=tog, aes(x=one_minus_rpac, y=Freq)) +
     geom_point(shape=21, color="black", fill="black", size=1.5) +
     geom_path(color="grey", alpha=0.75, linetype=2) +
