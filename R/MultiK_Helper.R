@@ -420,7 +420,7 @@ getClusters <- function(seu, optK) {
       clusters[, i] <- as.numeric(as.character(seu@meta.data$seurat_clusters))
     }
   }
-  return(list("clusters"=clusters, "resolution"=res, "sobj"=seu))
+  return(list("clusters"=clusters, "resolution"=res))
 }
 
 
@@ -448,10 +448,10 @@ RunSigClust <- function(x1, x2, l1, l2) {
 CalcSigClust = function(seu, clusters) {
   print("TESTTEST1")
   suppressPackageStartupMessages(library(Seurat))
-#  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = TRUE)
- # seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
- #                             loess.span = 0.3, clip.max = "auto",
-  #                            num.bin = 20, binning.method = "equal_width", verbose = T)
+  seu <- NormalizeData(object = seu, normalization.method = "LogNormalize", scale.factor = 10000, verbose = TRUE)
+  seu <- FindVariableFeatures(object = seu, selection.method = "vst", nfeatures = 2000,
+                              loess.span = 0.3, clip.max = "auto",
+                              num.bin = 20, binning.method = "equal_width", verbose = T)
   print("TESTTEST2")
   hvg <- VariableFeatures(object=seu)
   norm.hvg <- seu@assays$RNA@data[hvg, ]
